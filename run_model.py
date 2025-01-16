@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from transformers import (AutoTokenizer, BertForSequenceClassification, BertConfig,
                           Trainer, TrainingArguments)
+from transformers import ReformerConfig, ReformerForSequenceClassification
 
 from tqdm import tqdm
 from torch.optim import Adam
@@ -56,7 +57,9 @@ TASKS = {
 def get_model(config, model_config):
     model_config = BertConfig(**model_config)
     model = BertForSequenceClassification(model_config)
-
+    
+    # model_config = ReformerConfig(**model_config)
+    # model = ReformerForSequenceClassification(model_config)
     if config.tied_weights:
         layer_base = model.bert.encoder.layer
         force_weight_sharing(layer_base)
@@ -148,7 +151,7 @@ def train(model, config, use_deepspeed):
 # main
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--task", default="listops", choices=TASKS.keys(),
+    parser.add_argument("--task", default="imdb", choices=TASKS.keys(),
                         help="choose an LRA dataset from available options")
     parser.add_argument("--deepspeed", action="store_true",
                         help="use deepspeed optimization for better performance")

@@ -1,3 +1,4 @@
+import unicodedata
 import torch
 import ml_collections
 from train_utils import create_learning_rate_scheduler
@@ -56,9 +57,8 @@ def pixel_tokenizer(x, max_length):
     mask = ([1] * n) + ([0] * (max_length-n))
     return {'input_ids': torch.LongTensor([ids]), 'attention_mask': torch.LongTensor([mask])}
 
-
 pixel_tokenizer.vocab_size = 256 + 1
-ascii_tokenizer = make_char_tokenizer(''.join(chr(i) for i in range(256)))
+ascii_tokenizer = make_char_tokenizer(''.join(chr(i) for i in range(256))) #TODO: Professor is investigating
 
 
 # configs
@@ -102,6 +102,7 @@ def get_text_classification_config(num_labels=2):
     config.tokenizer = ascii_tokenizer
     config.tied_weights = False
     config.max_length = 1000
+    config.lr_scheduler = create_learning_rate_scheduler("constant * linear_warmup * rsqrt_decay", config)
 
     model_config = ml_collections.ConfigDict()
     model_config.max_position_embeddings = config.max_length

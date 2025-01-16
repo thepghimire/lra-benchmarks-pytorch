@@ -9,7 +9,7 @@ from itertools import cycle
 
 class ImdbDataset:
     def __init__(self, config, split='train'):       
-        data_paths = {'train': "datasets/aclImdb/train", 'eval': "datasets/aclImdb/test"}
+        data_paths = {'train': "D:\\PranjalG\\lra-benchmarks-pytorch\\datasets\\aclImdb\\train", 'eval': "D:\\PranjalG\\lra-benchmarks-pytorch\\datasets\\aclImdb\\test"}
         split_path = data_paths[split]
         neg_path = split_path + "/neg"
         pos_path = split_path + "/pos"
@@ -35,8 +35,8 @@ class ImdbDataset:
 class ListOpsDataset:
     def __init__(self, config, split='train'):
         
-        data_paths = {'train': "datasets/lra_release/listops-1000/basic_train.tsv",
-                      'eval': "datasets/lra_release/listops-1000/basic_val.tsv"}
+        data_paths = {'train': "D:\\PranjalG\\lra-benchmarks-pytorch\\datasets\\lra_release\\listops-1000\\basic_train.tsv",
+                      'eval': "D:\\PranjalG\\lra-benchmarks-pytorch\\datasets\\lra_release\\listops-1000\\basic_val.tsv"}
         self.data = pd.read_csv(data_paths[split], delimiter='\t')
         self.tokenizer = config.tokenizer
         self.max_length = config.max_length
