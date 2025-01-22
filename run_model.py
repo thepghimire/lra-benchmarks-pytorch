@@ -100,6 +100,9 @@ def train(model, config, use_deepspeed):
     avg_acc = None
     pbar = tqdm(cycle(dataloader), total=max_train_steps)
     for i, (inputs, target) in enumerate(pbar):
+        if len(inputs) != 2 or len(target) != 4:
+            print(f"INPUTS LENGTH 2 = {len(inputs)}")
+            print(f"TARGET LENGTH 4 = {len(target)}")
         if i == max_train_steps:
             break
         if use_deepspeed:
@@ -150,6 +153,8 @@ def train(model, config, use_deepspeed):
 
 # main
 if __name__ == "__main__":
+    import os
+    os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
     parser = ArgumentParser()
     parser.add_argument("--task", default="imdb", choices=TASKS.keys(),
                         help="choose an LRA dataset from available options")

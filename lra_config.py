@@ -7,7 +7,15 @@ from train_utils import create_learning_rate_scheduler
 # helper fns
 def make_char_tokenizer(allowed_chars, lowercase_input=False):
     # make distinct
+    #allowed_chars = list cha re
+    allowed_chars = ['·', '0', 'T', 's', '\x8a', 'ä', '\x01', '\xa0', 'v', '\x12', '\x96', 'ò', 'B', 'È', '&', '®', '{', '\t', '|', '\x82', 't', '¼', 'i', 'É', '\x15', 'ô', 'ü', '«', '\x0b', '\x93', '\x9a', '?', '×', 'Ä', '´', 'ó', '~', 'H', '\x92', 'l', 'r', '\x00', '_', '\x8d', 'Ú', 'g', 'j', '\x88', 'Ö', 'ï', '(', 'G', '\x03', '\\', ';', 'Ô', '\x8c', 'e', 'ì', 'ý', '<', 'F', '\x94', '\xad', '`', 'Ï', '½', '\x11', 'w', '\x19', 'U', '°', 'ù', 'À', 'V', '\x80', 'u', '\x05', '4', '\x99', '\x9b', '\x8f', 'q', '\x14', '\x13', '1', '9', ',', '"', 'h', '³', '–', '*', '\x9c', 'ê', 'R', 'Z', 'O', '$', '\x0e', '¿', 'L', '#', '\r', 'd', '%', 'î', '\x0c', '!', 'm', '\x95', '\x1b', 'z', '\x98', '\x1d', '¤', 'D', '[', '\x08', 'S', 'à', 'ø', ' ', ']', 'C', '¸', '\x86', "'", '¢', 'I', '±', '3', 'Ì', 'Î', 'M', '\x1c', '\x9d', 'Ó', '\x02', '\x17', '+', '¾', '¯', '¦', '\x9f', 'í', 'á', '©', 'y', '¹', 'Ø', 'æ', '\x1a', 'Q', '2', '§', 'J', 'E', 'Á', '\x1e', '\x06', ':', '8', 'Û', '^', 'õ', '>', '\x18', '@', '\x90', 'ß', 'ç', '\x0f', '\x8e', '\x9e', 'X', 'Ê', ')', '£', 'þ', 'Ë', 'ÿ', '¶', '\x8b', 'P', '\x91', '\x1f', 'Ã', '\x84', '/', '\x07', '»', 'ñ', 'Y', 'ð', '¡', 'Æ', 'ö', 'º', 'x', '\x85', 'k', '}', 'Ç', 'Ð', 'â', '÷', 'f', 'Ü', '\n', 'Ñ', 'è', 'µ', 'ú', 'Ò', 'Þ', 'ª', 'Â', '²', '\x89', 'W', '\x10', '\x83', '\x87', 'ë', '\x81', '¬', 'Í', '\x16', 'é', 'Ù', 'Ý', '\x97', '5', '\x04', 'N', 'ã', '=', 'Å', '.', 'c', '¥', 'n', 'Õ', '\x7f', 'K', 'b', 'å', 'o', '7', '6', '¨', 'û', 'p', 'a', 'A', '-']
     allowed_chars = list(set(allowed_chars))
+    # print(allowed_chars)
+    # allowed_chars.append('–')
+    # allowed_chars.append('…')
+    # # print(len(allowed_chars))
+    # print(allowed_chars)
+    
 
     def _tokenizer(x, max_length):
         # note: x is not batched
@@ -16,6 +24,9 @@ def make_char_tokenizer(allowed_chars, lowercase_input=False):
             x = x.lower()
         n = len(x)
         mask = ([1] * n) + ([0] * (max_length - n))
+        error_items = ['—', '…', '‘','’','’','י','–','“','”','″','ג','Ż','א']
+        for err in error_items:
+            allowed_chars.append(err)        
         ids = list(map(lambda c: allowed_chars.index(c) + 1, x)) + ([0] * (max_length - n))
         return {'input_ids': torch.LongTensor([ids]), 'attention_mask': torch.LongTensor([mask])}
 
@@ -58,8 +69,14 @@ def pixel_tokenizer(x, max_length):
     return {'input_ids': torch.LongTensor([ids]), 'attention_mask': torch.LongTensor([mask])}
 
 pixel_tokenizer.vocab_size = 256 + 1
-ascii_tokenizer = make_char_tokenizer(''.join(chr(i) for i in range(256))) #TODO: Professor is investigating
 
+# ascii_tokenizer = make_char_tokenizer(''.join(chr(i) for i in range(256))) #TODO: Professor is investigating
+#another way
+for i in range(256):
+    try:
+        ascii_tokenizer = make_char_tokenizer(''.join(chr(i)))
+    except ValueError as e:
+        print(e)
 
 # configs
 def get_listops_config():

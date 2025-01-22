@@ -22,7 +22,7 @@ class ImdbDataset:
         
     def __getitem__(self, i):
         data = self.data[i]
-        with open(data[0], 'r') as fo:
+        with open(data[0], 'r', encoding='utf-8') as fo:
             source = fo.read()
         inputs = self.tokenizer(source, max_length=self.max_length)
         target = int(data[1])
