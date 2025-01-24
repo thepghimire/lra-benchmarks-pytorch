@@ -155,6 +155,7 @@ def train(model, config, use_deepspeed):
 if __name__ == "__main__":
     import os
     os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+    os.environ['TORCH_USE_CUDA_DSA'] = '1'
     parser = ArgumentParser()
     parser.add_argument("--task", default="imdb", choices=TASKS.keys(),
                         help="choose an LRA dataset from available options")

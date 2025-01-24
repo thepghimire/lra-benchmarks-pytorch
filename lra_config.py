@@ -19,15 +19,28 @@ def make_char_tokenizer(allowed_chars, lowercase_input=False):
 
     def _tokenizer(x, max_length):
         # note: x is not batched
+        # error_items = ['—', '…', '‘','’','’','י','–','“','”','″','ג','Ż','א','ō','ı','ל','ğ']
+        # error_items_len = len(error_items)
+        # for err in error_items:
+        #     allowed_chars.append(err)        
         x = x[:max_length]
         if lowercase_input:
             x = x.lower()
         n = len(x)
         mask = ([1] * n) + ([0] * (max_length - n))
-        error_items = ['—', '…', '‘','’','’','י','–','“','”','″','ג','Ż','א']
-        for err in error_items:
-            allowed_chars.append(err)        
-        ids = list(map(lambda c: allowed_chars.index(c) + 1, x)) + ([0] * (max_length - n))
+        # ids = list(map(lambda c: allowed_chars.index(c) + 1, x)) + ([0] * (max_length - n))
+
+        ids = []
+        # not_founds = []
+        for c in x:
+            if c in allowed_chars:
+                ids.append(allowed_chars.index(c) + 1)
+            else:
+                # print("+++++++++++++ Value not found +++++++++++++++++++")
+                print(c)
+                # print("+++++++++++++++++++++++++++++++++++++++++++++++++")
+                ids.append(0)
+        ids += [0]*(max_length - n)
         return {'input_ids': torch.LongTensor([ids]), 'attention_mask': torch.LongTensor([mask])}
 
     _tokenizer.vocab_size = len(allowed_chars) + 1
